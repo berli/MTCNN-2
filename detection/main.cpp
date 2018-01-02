@@ -89,7 +89,7 @@ int main() {
         
         string lsFps = "fps:";
         lsFps += to_string(liElapse);
-        lsFps += " cur fps:";
+        lsFps += " total fps:";
         lsFps += std::to_string(frame_count);
         
         for(int i = 0; i < rectangles.size(); i++)
