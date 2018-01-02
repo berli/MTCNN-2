@@ -33,6 +33,14 @@ using namespace cv;
 //    return 0;
 //}
 
+long getMillSeconds()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+
+    return 1000*tv.tv_sec+tv.tv_usec/1000;
+}
+
 int main() {
 
 
@@ -67,8 +75,11 @@ int main() {
         vector<Rect> rectangles;
         vector<float> confidences;
         std::vector<std::vector<cv::Point>> alignment;
+        
+        long s = getMillSeconds();
         mtcnn.detection(img, rectangles, confidences, alignment);
-
+        cout<<" time is  "<<(getMillSeconds()-s)<<" ms"<<endl;
+        
         for(int i = 0; i < rectangles.size(); i++)
         {
             int green = confidences[i] * 255;
