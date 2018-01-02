@@ -69,7 +69,7 @@ int main() {
 //    writer.open("../result/SuicideSquad.mp4",CV_FOURCC('M', 'J', 'P', 'G'), 25, Size(1280,720), true);
 
     Mat img;
-    int frame_count = 0;
+    unsigned long  frame_count = 0;
     while(cap.read(img))
     {
         vector<Rect> rectangles;
@@ -78,7 +78,19 @@ int main() {
         
         long s = getMillSeconds();
         mtcnn.detection(img, rectangles, confidences, alignment);
-        cout<<" time is  "<<(getMillSeconds()-s)<<" ms"<<endl;
+        
+        int liElapse = getMillSeconds()-s;
+        
+        cout<<" time is  "<<liElapse<<" ms"<<endl;
+        if( liElapse > 0 )
+            liElapse = 1000/liElapse;
+        else
+            liElapse = 1000;
+        
+        string lsFps = "fps:";
+        lsFps += to_string(liElapse);
+        lsFps += " cur fps:";
+        lsFps += std::to_string(frame_count);
         
         for(int i = 0; i < rectangles.size(); i++)
         {
@@ -92,7 +104,7 @@ int main() {
         }
 
         frame_count++;
-        cv::putText(img, std::to_string(frame_count), cvPoint(3, 13),
+        cv::putText(img, lsFps, cvPoint(3, 13),
                     cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0, 255, 0), 1, CV_AA);
 //        writer.write(img);
         imshow("Live", img);
