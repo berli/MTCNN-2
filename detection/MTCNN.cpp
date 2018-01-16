@@ -366,7 +366,7 @@ void MTCNN::Predict(const cv::Mat& img, int i)
  * used to input is a group of image with crop from original image
  * the reshape of input layer of net is the number, channels, height and width of images.
  */
-void MTCNN::Predict(const std::vector<cv::Mat> imgs, int i)
+void MTCNN::Predict(const std::vector<cv::Mat>& imgs, int i)
 {
     std::shared_ptr<Net<float>> net = nets_[i];
 
@@ -434,7 +434,7 @@ void MTCNN::WrapInputLayer(const cv::Mat& img, std::vector<cv::Mat> *input_chann
  * WrapInputLayer(const vector<cv::Mat> imgs, std::vector<cv::Mat> *input_channels, int i) function
  * used to write the separate BGR planes directly to the input layer of the network
  */
-void MTCNN::WrapInputLayer(const vector<cv::Mat> imgs, std::vector<cv::Mat> *input_channels, int i)
+void MTCNN::WrapInputLayer(const vector<cv::Mat>& imgs, std::vector<cv::Mat> *input_channels, int i)
 {
     Blob<float> *input_layer = nets_[i]->input_blobs()[0];
 
@@ -506,7 +506,7 @@ void MTCNN::resize_img()
     img_resized_ = img_resized;
 }
 
-void MTCNN::GenerateBoxs(cv::Mat img)
+void MTCNN::GenerateBoxs(cv::Mat& img)
 {
     int stride = 2;
     int cellSize = input_geometry_[0].width;
@@ -558,7 +558,7 @@ void MTCNN::GenerateBoxs(cv::Mat img)
 //    regression_box_.insert(regression_box_.end(), regression_box.begin(), regression_box.end());
 }
 
-void MTCNN::BoxRegress(std::vector<cv::Rect>& bounding_box, std::vector<cv::Rect> regression_box)
+void MTCNN::BoxRegress(std::vector<cv::Rect>& bounding_box, const std::vector<cv::Rect>& regression_box)
 {
 
     for(int i=0;i<bounding_box.size();i++)

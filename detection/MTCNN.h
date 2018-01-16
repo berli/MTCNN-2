@@ -37,15 +37,15 @@ public:
     void global_NMS();
 
     void Predict(const cv::Mat& img, int i);
-    void Predict(const std::vector<cv::Mat> imgs, int i);
+    void Predict(const std::vector<cv::Mat>& imgs, int i);
     void WrapInputLayer(const cv::Mat& img, std::vector<cv::Mat> *input_channels, int i);
-    void WrapInputLayer(const vector<cv::Mat> imgs, std::vector<cv::Mat> *input_channels, int i);
+    void WrapInputLayer(const vector<cv::Mat>& imgs, std::vector<cv::Mat> *input_channels, int i);
 
     float IoU(cv::Rect rect1, cv::Rect rect2);
     float IoM(cv::Rect rect1, cv::Rect rect2);
     void resize_img();
     void GenerateBoxs(cv::Mat img);
-    void BoxRegress(std::vector<cv::Rect>& bounding_box, std::vector<cv::Rect> regression_box);
+    void BoxRegress(std::vector<cv::Rect>& bounding_box, const std::vector<cv::Rect>& regression_box);
     void Padding(std::vector<cv::Rect>& bounding_box, int img_w,int img_h);
     cv::Mat crop(cv::Mat img, cv::Rect& rect);
 
