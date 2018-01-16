@@ -41,12 +41,15 @@ MTCNN::MTCNN(const std::vector<std::string> model_file, const std::vector<std::s
     }
 }
 
-MTCNN::~MTCNN(){}
+MTCNN::~MTCNN()
+{
+}
 
 void MTCNN::detection(const cv::Mat& img, std::vector<cv::Rect>& rectangles)
 {
     Preprocess(img);
-    P_Net();
+ 
+ 	P_Net();
     local_NMS();
     R_Net();
     local_NMS();

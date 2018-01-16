@@ -41,11 +41,12 @@ long getMillSeconds()
     return 1000*tv.tv_sec+tv.tv_usec/1000;
 }
 
-int main() {
+int main(int argc, char*argv[]) {
 
 
     //the vector used to input the address of the net model
-    vector<string> model_file = {
+    vector<string> model_file = 
+	{
             "../model/det1.prototxt",
             "../model/det2.prototxt",
             "../model/det3.prototxt"
@@ -53,7 +54,8 @@ int main() {
     };
 
     //the vector used to input the address of the net parameters
-    vector<string> trained_file = {
+    vector<string> trained_file = 
+	{
             "../model/det1.caffemodel",
             "../model/det2.caffemodel",
             "../model/det3.caffemodel"
@@ -62,12 +64,29 @@ int main() {
 
     MTCNN mtcnn(model_file, trained_file);
 
-    VideoCapture cap(0);
-//    VideoCapture cap("../../SuicideSquad.mp4");
+	LOG(INFO)<<"argc:"<<argc;
+    //VideoCapture cap("../../hls-20.mp4");
+    VideoCapture cap;
+	bool lbret = false;
+	if(argc > 1)
+		lbret = cap.open(argv[1]);
+	else
+		lbret = cap.open(0);
+
+	if(!lbret)
+		lbret = cap.open("../../hls-20.mp4");
+	if(!lbret)
+	{
+		LOG(ERROR)<<"open failed";
+		return 0;
+	}
+//    VideoCapture cap(0);
 
 //    VideoWriter writer;
 //    writer.open("../result/SuicideSquad.mp4",CV_FOURCC('M', 'J', 'P', 'G'), 25, Size(1280,720), true);
 
+    cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
     Mat img;
     unsigned long  frame_count = 0;
     while(cap.read(img))
@@ -75,23 +94,26 @@ int main() {
         vector<Rect> rectangles;
         vector<float> confidences;
         std::vector<std::vector<cv::Point>> alignment;
-        
+
         long s = getMillSeconds();
         mtcnn.detection(img, rectangles, confidences, alignment);
-        
+
         int liElapse = getMillSeconds()-s;
-        
-        cout<<" time is  "<<liElapse<<" ms"<<endl;
+
+        //cout<<" time is  "<<liElapse<<" ms"<<endl;
+        int liSpeed = 0;
         if( liElapse > 0 )
-            liElapse = 1000/liElapse;
+            liSpeed = 1000/liElapse;
         else
-            liElapse = 1000;
-        
+            liSpeed = 1000;
+
         string lsFps = "fps:";
+        lsFps += to_string(liSpeed);
+        lsFps += " time:";
         lsFps += to_string(liElapse);
         lsFps += " total fps:";
         lsFps += std::to_string(frame_count);
-        
+
         for(int i = 0; i < rectangles.size(); i++)
         {
             int green = confidences[i] * 255;
