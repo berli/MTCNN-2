@@ -8,15 +8,22 @@
 
 #include "MTCNN.h"
 
-MTCNN::MTCNN(){}
+MTCNN::MTCNN()
+{
+}
 
-MTCNN::MTCNN(const std::vector<std::string> model_file, const std::vector<std::string> trained_file)
+int MTCNN::initialize(const std::vector<std::string> model_file, const std::vector<std::string> trained_file)
 {
     #ifdef CPU_ONLY
         Caffe::set_mode(Caffe::CPU);
     #else
         Caffe::set_mode(Caffe::GPU);
     #endif
+
+    if(model_file.size() != trained_file.size())
+    {
+       return -1;
+    }
 
     for(int i = 0; i < model_file.size(); i++)
     {
@@ -39,17 +46,16 @@ MTCNN::MTCNN(const std::vector<std::string> model_file, const std::vector<std::s
         else if(num_channels_ != num_channel)
             std::cout << "Error: The number channels of the nets are different!" << std::endl;
     }
+
+    return 0;
 }
 
-MTCNN::~MTCNN()
-{
-}
+MTCNN::~MTCNN(){}
 
 void MTCNN::detection(const cv::Mat& img, std::vector<cv::Rect>& rectangles)
 {
     Preprocess(img);
- 
- 	P_Net();
+    P_Net();
     local_NMS();
     R_Net();
     local_NMS();
@@ -506,7 +512,7 @@ void MTCNN::resize_img()
     img_resized_ = img_resized;
 }
 
-void MTCNN::GenerateBoxs(cv::Mat& img)
+void MTCNN::GenerateBoxs(const cv::Mat& img)
 {
     int stride = 2;
     int cellSize = input_geometry_[0].width;

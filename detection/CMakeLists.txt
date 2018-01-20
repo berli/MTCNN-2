@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.4)
 project(MTCNN)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_STANDARD 11)
+
+#ADD_DEFINITIONS(-DCPU_ONLY)
+ADD_DEFINITIONS(-DUSE_CUDNN)
 
 find_package(OpenCV)
 

@@ -19,14 +19,16 @@ class MTCNN {
 public:
 
     MTCNN();
-    MTCNN(const std::vector<std::string> model_file, const std::vector<std::string> trained_file);
     ~MTCNN();
+    
+    int initialize(const std::vector<std::string> model_file, const std::vector<std::string> trained_file);
 
     void detection(const cv::Mat& img, std::vector<cv::Rect>& rectangles);
     void detection(const cv::Mat& img, std::vector<cv::Rect>& rectangles, std::vector<float>& confidence);
     void detection(const cv::Mat& img, std::vector<cv::Rect>& rectangles, std::vector<float>& confidence, std::vector<std::vector<cv::Point>>& alignment);
     void detection_TEST(const cv::Mat& img, std::vector<cv::Rect>& rectangles);
 
+private:
     void Preprocess(const cv::Mat &img);
     void P_Net();
     void R_Net();
@@ -44,13 +46,15 @@ public:
     float IoU(cv::Rect rect1, cv::Rect rect2);
     float IoM(cv::Rect rect1, cv::Rect rect2);
     void resize_img();
-    void GenerateBoxs(cv::Mat img);
+    void GenerateBoxs(const cv::Mat& img);
     void BoxRegress(std::vector<cv::Rect>& bounding_box, const std::vector<cv::Rect>& regression_box);
     void Padding(std::vector<cv::Rect>& bounding_box, int img_w,int img_h);
     cv::Mat crop(cv::Mat img, cv::Rect& rect);
 
     void img_show(cv::Mat img, std::string name);
     void img_show_T(cv::Mat img, std::string name);
+
+protected:
     //param for P, R, O, L net
     std::vector<std::shared_ptr<Net<float>>> nets_;
     std::vector<cv::Size> input_geometry_;
