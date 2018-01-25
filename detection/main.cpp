@@ -41,9 +41,8 @@ long getMillSeconds()
     return 1000*tv.tv_sec+tv.tv_usec/1000;
 }
 
-int main() {
-
-
+int main(int argc, char*argv[]) 
+{
     //the vector used to input the address of the net model
     vector<string> model_file = {
             "model/det1.prototxt",
@@ -62,17 +61,24 @@ int main() {
 
     MTCNN mtcnn;
     mtcnn.initialize(model_file, trained_file);
+    
+    Mat img;
+    VideoCapture cap;
+    bool lbRet = cap.open("../../hls-20-720p.mp4");
+    if(!lbRet)
+       lbRet = cap.open(0);
 
-//    VideoCapture cap(0);
-    VideoCapture cap("../../hls-20.mp4");
+    if(argc ==2)
+       img = imread(argv[1]);
 
 //    VideoWriter writer;
 //    writer.open("../result/SuicideSquad.mp4",CV_FOURCC('M', 'J', 'P', 'G'), 25, Size(1280,720), true);
 
-    Mat img;
     unsigned long  frame_count = 0;
-    while(cap.read(img))
+    while(true)
     {
+        if(lbRet)
+	      lbRet = cap.read(img);
         vector<Rect> rectangles;
         vector<float> confidences;
         std::vector<std::vector<cv::Point>> alignment;
@@ -80,16 +86,16 @@ int main() {
         long s = getMillSeconds();
         mtcnn.detection(img, rectangles, confidences, alignment);
         
-        int liElapse = getMillSeconds()-s;
-        
-        cout<<" time is  "<<liElapse<<" ms"<<endl;
-        if( liElapse > 0 )
-            liElapse = 1000/liElapse;
+		int liFps = getMillSeconds() - s;
+        if( liFps > 0 )
+            liFps = 1000/liFps;
         else
-            liElapse = 1000;
+            liFps = 1000;
         
         string lsFps = "fps:";
-        lsFps += to_string(liElapse);
+        lsFps += to_string(liFps);
+        lsFps += " time is:";
+        lsFps += to_string(getMillSeconds()-s);
         lsFps += " total fps:";
         lsFps += std::to_string(frame_count);
         
@@ -103,13 +109,23 @@ int main() {
                 cv::circle(img, alignment[i][j], 5, cv::Scalar(255, 255, 0), 3);
             }
         }
+        if(!lbRet)
+           LOG(INFO)<<"face num:"<<rectangles.size()<<" alignment:"<<alignment.size();
 
         frame_count++;
         cv::putText(img, lsFps, cvPoint(3, 13),
                     cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0, 255, 0), 1, CV_AA);
 //        writer.write(img);
         imshow("Live", img);
-        waitKey(1);
+        if(!lbRet)
+		{
+         waitKey(0);
+	     break;
+		}
+	    else
+		{
+         waitKey(1);
+		}
     }
 
     return 0;

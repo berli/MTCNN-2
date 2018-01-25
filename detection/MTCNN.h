@@ -74,9 +74,11 @@ protected:
     std::vector<float> alignment_temp_;
 
     //paramter for the threshold
-    int minSize_ = 200;
+    //int minSize_ = 200;
+    int minSize_ = 100;
     float factor_ = 0.709;
-    float threshold_[3] = {0.5, 0.5, 0.3};
+    //float threshold_[3] = {0.5, 0.5, 0.3};
+    float threshold_[3] = {0.7, 0.7, 0.7};
     float threshold_NMS_ = 0.5;
 };
 
