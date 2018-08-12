@@ -6,6 +6,7 @@
  * TO DO : change the P-net and update the generat box
  */
 
+#include "cv.h"
 #include "MTCNN.h"
 
 MTCNN::MTCNN()

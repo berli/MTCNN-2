@@ -1,5 +1,6 @@
 #include <iostream>
 #include "MTCNN.h"
+#include "cv.h"
 #include "opencv2/opencv.hpp"
 
 using namespace std;
